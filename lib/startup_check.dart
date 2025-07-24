@@ -13,6 +13,7 @@ class StartupCheck extends StatefulWidget {
 
 class _StartupCheckState extends State<StartupCheck> {
   bool? isActive;
+  String message = "Checking app status...";
 
   @override
   void initState() {
@@ -30,22 +31,26 @@ class _StartupCheckState extends State<StartupCheck> {
 
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body);
-        if (data['active'] == false) {
-          // Optional: Log message
-          debugPrint(
-              "App disabled remotely: ${data['message'] ?? 'No message'}");
 
-          // Exit the app immediately
-          exit(1);
+        if (data['active'] == false) {
+          message = data['message'] ?? "🚫 This app has been disabled remotely.";
+
+          // Option A: exit the app
+          // exit(1);
+
+          // Option B: block the app with a message screen
+          setState(() => isActive = false);
+          return;
         } else {
           setState(() => isActive = true);
         }
       } else {
-        setState(() => isActive = true);
+        message = "⚠️ Failed to check app status. Server returned ${res.statusCode}.";
+        setState(() => isActive = false); // Block app if cannot verify status
       }
     } catch (e) {
-      // If network error occurs, allow app to run
-      setState(() => isActive = true);
+      message = "❌ Error: Could not connect to server.\nMake sure you're online.";
+      setState(() => isActive = false); // Block app if network fails
     }
   }
 
@@ -54,6 +59,26 @@ class _StartupCheckState extends State<StartupCheck> {
     if (isActive == null) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (isActive == false) {
+      return Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Text(
+              message,
+              style: const TextStyle(
+                color: Colors.redAccent,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
       );
     }
 
