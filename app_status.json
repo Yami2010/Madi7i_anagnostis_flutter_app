@@ -1,4 +1,4 @@
 {
-  "active": true,
-  "message": "App is live!"
+  "active": false,
+  "message": "This app has been disabled for testing purposes."
 }
