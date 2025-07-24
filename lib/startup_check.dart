@@ -25,7 +25,7 @@ class _StartupCheckState extends State<StartupCheck> {
     try {
       final res = await http.get(
         Uri.parse(
-          'https://yami2010.github.io/flutter-app-control/app_status.json',
+          'https://yami2010.github.io/Madi7i_anagnostis_flutter_app/app_status.json',
         ),
       );
 
@@ -35,9 +35,6 @@ class _StartupCheckState extends State<StartupCheck> {
         if (data['active'] == false) {
           message = data['message'] ?? "🚫 This app has been disabled remotely.";
 
-          // Option A: exit the app
-          // exit(1);
-
           // Option B: block the app with a message screen
           setState(() => isActive = false);
           return;
@@ -46,11 +43,11 @@ class _StartupCheckState extends State<StartupCheck> {
         }
       } else {
         message = "⚠️ Failed to check app status. Server returned ${res.statusCode}.";
-        setState(() => isActive = false); // Block app if cannot verify status
+        setState(() => isActive = false);
       }
     } catch (e) {
       message = "❌ Error: Could not connect to server.\nMake sure you're online.";
-      setState(() => isActive = false); // Block app if network fails
+      setState(() => isActive = false);
     }
   }
 
